@@ -1,5 +1,5 @@
-let active = [
-    {name: 'Cloud', level: 7, selected: true}, 
+let activeParty = [
+    {name: 'Cloud', level: 7, selected: 'true'}, 
     {name: 'Tifa', level: 7, selected: false}, 
     {name: 'Barret', level: 7, selected: false}
 ]
@@ -12,5 +12,7 @@ let reserve = [
 ]
 
 // swapping out a party member, cloud for squall
-let activeSwap = active.findIndex(partyMember => partyMember.selected === true);
-active.splice(activeSwap, 1);
+let activeSwap = activeParty.findIndex(partyMember => partyMember.selected === 'true');
+console.log(activeSwap);
+activeParty.splice(activeSwap, 1);
+console.log('updated!')

@@ -1,3 +1,6 @@
+//-------------------------------------------------------------------------------//
+//------------------------------------ Timer START ------------------------------//
+//-------------------------------------------------------------------------------//
 
 let counter = 0;
 let minutes = 0;
@@ -15,24 +18,85 @@ function formatTime() {
         }
     }
     gameClock.innerText = hours + ":" + minutes + ":" + counter;
-}
-
-
+};
 
 setInterval(formatTime, 1000);
 
+//-------------------------------------------------------------------------------//
+//------------------------------------ Timer END --------------------------------//
+//-------------------------------------------------------------------------------//
+
+
+
+//-------------------------------------------------------------------------------//
+//------------------------------------ Party START-------------------------------//
+//-------------------------------------------------------------------------------//
 
 let activeParty = [
-    {name: 'Cloud', level: 7, selected: false}, 
-    {name: 'Tifa', level: 7, selected: false}, 
-    {name: 'Barret', level: 7, selected: true}
+    {name: 'Cloud', 
+    portrait: 'images/Cloud.jpeg', 
+    level: 7, 
+    maxHP: 345,
+    maxMP: 160,
+    selected: true}, 
+
+    {name: 'Barret', 
+    portrait: 'images/Barret.jpeg', 
+    level: 7, 
+    maxHP: 345,
+    maxMP: 160,
+    selected: false}, 
+
+    {name: 'Tifa', 
+    portrait: 'images/Tifa.jpeg', 
+    level: 7, 
+    maxHP: 345,
+    maxMP: 160,
+    selected: false}
 ]
 
 let reserveParty = [
-    {name: 'Squall', level: 7, selected: true}, 
-    {name: 'Zell', level: 7, selected: false}, 
-    {name: 'Irvine', level: 7, selected: false}, 
-    {name: 'Edea', level: 7, selected: false}
+    {name: 'Aerith', 
+    portrait: 'images/Aerith.jpeg', 
+    level: 7, 
+    maxHP: 345,
+    maxMP: 160,
+    selected: true},
+
+    {name: 'Red XIII', 
+    portrait: 'images/Red XIII.jpeg', 
+    level: 7,
+    maxHP: 345,
+    maxMP: 160,
+    selected: false}, 
+
+    {name: 'Yuffie', 
+    portrait: 'images/Yuffie.jpeg', 
+    level: 7, 
+    maxHP: 345,
+    maxMP: 160,
+    selected: false}, 
+
+    {name: 'Cait Sith', 
+    portrait: 'images/Cait Sith.jpeg', 
+    level: 7, 
+    maxHP: 345,
+    maxMP: 160,
+    selected: false},
+
+    {name: 'Vincent', 
+    portrait: 'images/Vincent.jpeg', 
+    level: 7, 
+    maxHP: 345,
+    maxMP: 160,
+    selected: false}, 
+
+    {name: 'Cid', 
+    portrait: 'images/Cid.jpeg', 
+    level: 7, 
+    maxHP: 345,
+    maxMP: 160,
+    selected: false}
 ]
 
 function displayPartyMembers() {
@@ -87,3 +151,75 @@ function swapPartyMembers() {
     console.log('updated!');
 }
 
+//-------------------------------------------------------------------------------//
+//------------------------------------ PARTY END --------------------------------//
+//-------------------------------------------------------------------------------//
+
+let portrait1 = document.getElementById('portrait1');
+let charName1 = document.getElementById('charName1');
+let charLevel1 = document.getElementById('charLevel1');
+let charHP1 = document.getElementById('charHP1');
+let charMP1 = document.getElementById('charMP1');
+
+let portrait2 = document.getElementById('portrait2');
+let charName2 = document.getElementById('charName2');
+let charLevel2 = document.getElementById('charLevel2');
+let charHP2 = document.getElementById('charHP2');
+let charMP2 = document.getElementById('charMP2');
+
+let portrait3 = document.getElementById('portrait3');
+let charName3 = document.getElementById('charName3');
+let charLevel3 = document.getElementById('charLevel3');
+let charHP3 = document.getElementById('charHP3');
+let charMP3 = document.getElementById('charMP3');
+
+function populateFirstCharacter() {
+    portrait1.src = activeParty[0].portrait;
+    charName1.innerText = activeParty[0].name;
+    charLevel1.innerText = activeParty[0].level;
+    charHP1.innerText = ` ${activeParty[0].maxHP}/${activeParty[0].maxHP}`;
+    charMP1.innerText = `${activeParty[0].maxMP}/${activeParty[0].maxMP}`;
+}
+
+function populateSecondCharacter() {
+    portrait2.src = activeParty[1].portrait;
+    charName2.innerText = activeParty[1].name;
+    charLevel2.innerText = activeParty[1].level;
+    charHP2.innerText = ` ${activeParty[1].maxHP}/${activeParty[1].maxHP}`;
+    charMP2.innerText = `${activeParty[1].maxMP}/${activeParty[1].maxMP}`;
+}
+
+function populateThirdCharacter() {
+    portrait3.src = activeParty[2].portrait;
+    charName3.innerText = activeParty[2].name;
+    charLevel3.innerText = activeParty[2].level;
+    charHP3.innerText = ` ${activeParty[2].maxHP}/${activeParty[2].maxHP}`;
+    charMP3.innerText = `${activeParty[2].maxMP}/${activeParty[2].maxMP}`;
+}
+function populateParty() {
+    activeParty.forEach((character, index) => {
+        // for each character in the active party (an array with 3 objects), we populate
+        // their information to each of the 3 slots in the main menu
+        // this function should run at page load, whenever the main menu is pulled up
+        
+        // the portrait image
+        let portrait = document.getElementById('portrait' + (index + 1).toString());
+        portrait.src = character.portrait;
+        
+        // the displayed name
+        let charName = document.getElementById('charName' + (index + 1).toString());
+        charName.innerText = character.name;
+        
+        // the character's level
+        let charLevel = document.getElementById('charLevel' + (index + 1).toString());
+        charLevel.innerText = character.level;
+        
+        // their current and max hp
+        let charHP = document.getElementById('charHP' + (index + 1).toString());
+        charHP.innerText = ` ${character.maxHP}/${character.maxHP}`;
+
+        // their current and max mp
+        let charMP = document.getElementById('charMP' + (index + 1).toString());
+        charMP.innerText = `${character.maxMP}/${character.maxMP}`;
+    });
+}

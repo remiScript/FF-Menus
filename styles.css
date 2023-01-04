@@ -83,7 +83,7 @@ li {
 }
 
 .top {
-    z-index: 99;
+    display: flex;
 }
 
 .middle {
@@ -226,4 +226,51 @@ ul {
     margin: 0px;
     padding: 0px;
     width: 400px;
+}
+
+.phsContainer {
+    margin-top: 28px;
+}
+
+.phsInfo {
+    width: 1080px;
+    padding: 5px 5px 5px 25px;
+}
+
+.menuIndicator {
+    padding: 5px 150px 5px 50px;
+    position: fixed;
+    left: 902px;
+}
+
+.phsLeft {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 25px 0px 25px 0px;
+    width: 550px;
+    z-index: 0;
+}
+
+.phsRight {
+    width: 550px;
+    padding: 0px;
+    
+}
+
+.selected {
+    box-sizing: border-box;
+    height: 200px;
+    margin: -4px;
+}
+
+.reserveParty {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+}
+
+.reservePortrait img {
+    width: 156px;
 }

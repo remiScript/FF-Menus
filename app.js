@@ -196,6 +196,15 @@ function populateThirdCharacter() {
     charHP3.innerText = ` ${activeParty[2].maxHP}/${activeParty[2].maxHP}`;
     charMP3.innerText = `${activeParty[2].maxMP}/${activeParty[2].maxMP}`;
 }
+
+function populateReserveParty() {
+    reserveParty.forEach((character, index) => {
+        let portrait = document.getElementById('reservePortrait' + (index + 1).toString());
+        portrait.src = character.portrait;
+        
+    });
+}
+
 function populateParty() {
     activeParty.forEach((character, index) => {
         // for each character in the active party (an array with 3 objects), we populate
@@ -222,4 +231,14 @@ function populateParty() {
         let charMP = document.getElementById('charMP' + (index + 1).toString());
         charMP.innerText = `${character.maxMP}/${character.maxMP}`;
     });
+    reserveParty.forEach((character, index) => {
+        let portrait = document.getElementById('reservePortrait' + (index + 1).toString());
+        portrait.src = character.portrait;
+        
+    });
+}
+
+function swapAndPop(){
+    swapPartyMembers();
+    populateParty();
 }

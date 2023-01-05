@@ -22,6 +22,7 @@ function formatTime() {
 
 setInterval(formatTime, 1000);
 
+
 //-------------------------------------------------------------------------------//
 //------------------------------------ Timer END --------------------------------//
 //-------------------------------------------------------------------------------//
@@ -30,18 +31,81 @@ setInterval(formatTime, 1000);
 //----------------------------------- Cursor Start ------------------------------//
 //-------------------------------------------------------------------------------//
 
-const cursor = document.querySelector('.cursor');
+let pos = 0;
+
+const cursor = document.getElementsByClassName("cursor");
+
 function animateCursor() {
-    cursor.classList.toggle('leftPosition');
+    Array.from(cursor).forEach(instance => {
+        instance.classList.toggle('leftPosition');
+    });
+    // cursor.classList.toggle('leftPosition');
 }
+
+setInterval(animateCursor, 700);
+
+function renderCursorPHS() {
+    // set the "highlighted" property of the top portrait in the active party to true
+    activeParty.forEach((character, index) => {
+        let charContainer = document.getElementById('charContainerPHS' + (index + 1).toString());
+        if (index == pos) {
+            character.highlighted = true;
+            console.log(character.name + " is highlighted.")
+            let img = charContainer.children[0];
+            console.log(img);
+            img.classList.remove('hidden');
+        } else {
+            character.highlighted = false;
+            let img = charContainer.children[0];
+            img.classList.add('hidden');
+        }
+        
+    });
+}
+
+function moveCursorUp() {
+    // when key is pressed, move one position down
+    // if you are at the bottom row, move to the top instead
+    // "movement" isn't really happening, we are removing and adding the cursor to
+    // another place in the DOM, next to another portrait
+    pos--;
+    if (pos == -1) {
+        pos = 2;
+    }
+    console.log("position: " + pos);
+    renderCursorPHS();
+}
+
+function moveCursorDown() {
+    // when key is pressed, move one position down
+    // if you are at the bottom row, move to the top instead
+    // "movement" isn't really happening, we are removing and adding the cursor to
+    // another place in the DOM, next to another portrait
+    pos++;
+    if (pos == 3) {
+        pos = 0;
+    }
+    console.log("position: " + pos);
+    renderCursorPHS();
+}
+
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'ArrowDown') {
+        moveCursorDown();
+    }
+})
+
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'ArrowUp') {
+        moveCursorUp();
+    }
+})
+
 
 //-------------------------------------------------------------------------------//
 //------------------------------------ Cursor END -------------------------------//
 //-------------------------------------------------------------------------------//
 
-
-setInterval(formatTime, 1000);
-setInterval(animateCursor, 500);
 
 //-------------------------------------------------------------------------------//
 //------------------------------------ Party START-------------------------------//
@@ -53,21 +117,24 @@ let activeParty = [
     level: 7, 
     maxHP: 345,
     maxMP: 160,
-    selected: true}, 
+    selected: true,
+    highlighted: false}, 
 
     {name: 'Barret', 
     portrait: 'images/Barret.jpeg', 
     level: 7, 
     maxHP: 345,
     maxMP: 160,
-    selected: false}, 
+    selected: false,
+    highlighted: false}, 
 
     {name: 'Tifa', 
     portrait: 'images/Tifa.jpeg', 
     level: 7, 
     maxHP: 345,
     maxMP: 160,
-    selected: false}
+    selected: false,
+    highlighted: false}
 ]
 
 let reserveParty = [
@@ -257,3 +324,6 @@ function swapAndPop(){
     swapPartyMembers();
     populateParty();
 }
+
+populateParty();
+renderCursorPHS();

@@ -41,12 +41,22 @@ body {
 .cursor {
     height: 40px;
     width: auto;
-    margin-left: 800px;
-    margin-bottom: -50px;
+    
     z-index: 99;
     position: relative;
     transition: all .5s;
     transition-timing-function: ease-in-out;
+}
+
+.cursorMain {
+    margin-left: 800px;
+    margin-bottom: -50px;
+}
+
+.cursorPHS {
+    position: absolute;
+    margin-top: 70px;
+    margin-left: -10px;
 }
 
 .leftPosition {
@@ -279,4 +289,8 @@ ul {
 
 .reservePortrait img {
     width: 156px;
+}
+
+.hidden {
+    display: none;
 }

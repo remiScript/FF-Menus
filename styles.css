@@ -45,6 +45,12 @@ body {
     margin-bottom: -50px;
     z-index: 99;
     position: relative;
+    transition: all .5s;
+    transition-timing-function: ease-in-out;
+}
+
+.leftPosition {
+    transform: translateX(-20px);   
 }
 
 

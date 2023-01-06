@@ -294,3 +294,9 @@ ul {
 .hidden {
     display: none;
 }
+
+.invisible {
+    opacity: .1;
+    transition: all .5s;
+    transition-timing-function: linear;
+}

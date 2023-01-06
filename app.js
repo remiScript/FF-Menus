@@ -42,7 +42,19 @@ function animateCursor() {
     // cursor.classList.toggle('leftPosition');
 }
 
-setInterval(animateCursor, 700);
+function blinkCursor() {
+    Array.from(cursor).forEach((instance, index) => {
+        if (activeParty[index].highlighted == true) {
+            instance.classList.toggle('hidden');
+        }
+    });
+}
+
+animationTimer = setInterval(animateCursor, 700);
+
+function isAnimationRunning() {
+    return !!animateCursor;
+}
 
 function renderCursorPHS() {
     // set the "highlighted" property of the top portrait in the active party to true
@@ -50,9 +62,7 @@ function renderCursorPHS() {
         let charContainer = document.getElementById('charContainerPHS' + (index + 1).toString());
         if (index == pos) {
             character.highlighted = true;
-            console.log(character.name + " is highlighted.")
             let img = charContainer.children[0];
-            console.log(img);
             img.classList.remove('hidden');
         } else {
             character.highlighted = false;
@@ -89,6 +99,15 @@ function moveCursorDown() {
     renderCursorPHS();
 }
 
+function xButtonPHS() {
+    //if we're on the active party, step 1, make cursor blink
+    clearInterval(animationTimer);
+    setInterval(blinkCursor, 25);
+    // "move" cursor to index[0] of reserve party
+    // adjust arrow functions?
+    // console.log('x button')   
+}
+
 document.addEventListener('keydown', function(event) {
     if (event.key === 'ArrowDown') {
         moveCursorDown();
@@ -98,6 +117,12 @@ document.addEventListener('keydown', function(event) {
 document.addEventListener('keydown', function(event) {
     if (event.key === 'ArrowUp') {
         moveCursorUp();
+    }
+})
+
+document.addEventListener('keydown', function(event) {
+    if(event.key === 'x') {
+        xButtonPHS();
     }
 })
 
@@ -143,42 +168,48 @@ let reserveParty = [
     level: 7, 
     maxHP: 345,
     maxMP: 160,
-    selected: true},
+    selected: true,
+    highlighted: false},
 
     {name: 'Red XIII', 
     portrait: 'images/Red XIII.jpeg', 
     level: 7,
     maxHP: 345,
     maxMP: 160,
-    selected: false}, 
+    selected: false,
+    highlighted: false}, 
 
     {name: 'Yuffie', 
     portrait: 'images/Yuffie.jpeg', 
     level: 7, 
     maxHP: 345,
     maxMP: 160,
-    selected: false}, 
+    selected: false,
+    highlighted: false}, 
 
     {name: 'Cait Sith', 
     portrait: 'images/Cait Sith.jpeg', 
     level: 7, 
     maxHP: 345,
     maxMP: 160,
-    selected: false},
+    selected: false,
+    highlighted: false},
 
     {name: 'Vincent', 
     portrait: 'images/Vincent.jpeg', 
     level: 7, 
     maxHP: 345,
     maxMP: 160,
-    selected: false}, 
+    selected: false,
+    highlighted: false}, 
 
     {name: 'Cid', 
     portrait: 'images/Cid.jpeg', 
     level: 7, 
     maxHP: 345,
     maxMP: 160,
-    selected: false}
+    selected: false,
+    highlighted: false}
 ]
 
 function displayPartyMembers() {

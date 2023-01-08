@@ -73,6 +73,8 @@ function renderCursorPHS() {
     });
 }
 
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXNOTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+// needs rewrite
 function moveCursorUp() {
     // when key is pressed, move one position down
     // if you are at the bottom row, move to the top instead
@@ -86,6 +88,8 @@ function moveCursorUp() {
     renderCursorPHS();
 }
 
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXNOTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+// needs rewrite
 function moveCursorDown() {
     // when key is pressed, move one position down
     // if you are at the bottom row, move to the top instead
@@ -99,15 +103,42 @@ function moveCursorDown() {
     renderCursorPHS();
 }
 
+
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXNOTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+// Write this as a function for the PHS screen only. Put this function in another file and import it
+// to the PHS screen html file. The main menu screen will have its own X button function. 
+// The X button only does 2 things
+// if an active party member is highlighted, it should :
+    // select them
+    // de-highlight them
+    // make the cursor stop animating
+    // make the cursor blink
+    // play a sound effect
+    // highlight the first inactive party member portrait
+    // disable up/down arrow functionality for the active party
+    // enable the up/down arrow functionality for the reserve party
+    // display the stats of the highlighted reserve party member in the preview panel
+// if an inactive party member is highlighted, it should:
+    // select them
+    // de-highlight them
+    // swap the two selected party members
+    // disable the preview panel
+    // de-select both party members
+    // re-highlight the first active party member portrait
+    // stop the blinking
+    // play a sound effect
+    // restart the cursor animation
+    // disable arrow functionality for reserve party
+    // re-enable arrow functionality for active party
 function xButtonPHS() {
+    // Everything in here will need to be rewritten (probably)
     //if we're on the active party, step 1, make cursor blink
     clearInterval(animationTimer);
     setInterval(blinkCursor, 25);
     // "move" cursor to index[0] of reserve party
     // adjust arrow functions?
-    // console.log('x button')   
+    console.log('x button')   
 }
-
 document.addEventListener('keydown', function(event) {
     if (event.key === 'ArrowDown') {
         moveCursorDown();
@@ -119,6 +150,7 @@ document.addEventListener('keydown', function(event) {
         moveCursorUp();
     }
 })
+
 
 document.addEventListener('keydown', function(event) {
     if(event.key === 'x') {
@@ -136,12 +168,35 @@ document.addEventListener('keydown', function(event) {
 //------------------------------------ Party START-------------------------------//
 //-------------------------------------------------------------------------------//
 
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXNOTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXNOTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXNOTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+// Make both parties one array, have a value of isActive set to true/false
+// Have the x button array functionality work one way for the PHS page, one way for the main
+
+
+
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXNOTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+// this needs to be renamed to "party" to address the one party array, so all references
+// to activeParty need to be reviewed
 let activeParty = [
     {name: 'Cloud', 
     portrait: 'images/Cloud.jpeg', 
     level: 7, 
     maxHP: 345,
     maxMP: 160,
+    isActive: true, 
     selected: true,
     highlighted: false}, 
 
@@ -149,7 +204,8 @@ let activeParty = [
     portrait: 'images/Barret.jpeg', 
     level: 7, 
     maxHP: 345,
-    maxMP: 160,
+    maxMP: 160, 
+    isActive: true, 
     selected: false,
     highlighted: false}, 
 
@@ -157,11 +213,70 @@ let activeParty = [
     portrait: 'images/Tifa.jpeg', 
     level: 7, 
     maxHP: 345,
-    maxMP: 160,
+    maxMP: 160, 
+    isActive: true, 
     selected: false,
+    highlighted: false}, 
+
+    {name: 'Aerith', 
+    portrait: 'images/Aerith.jpeg', 
+    level: 7, 
+    maxHP: 345,
+    maxMP: 160, 
+    isActive: false, 
+    selected: true,
+    highlighted: false},
+
+    {name: 'Red XIII', 
+    portrait: 'images/Red XIII.jpeg', 
+    level: 7,
+    maxHP: 345,
+    maxMP: 160,
+    selected: false, 
+    isActive: false, 
+    highlighted: false}, 
+
+    {name: 'Yuffie', 
+    portrait: 'images/Yuffie.jpeg', 
+    level: 7, 
+    maxHP: 345,
+    maxMP: 160,
+    selected: false, 
+    isActive: false, 
+    highlighted: false}, 
+
+    {name: 'Cait Sith', 
+    portrait: 'images/Cait Sith.jpeg', 
+    level: 7, 
+    maxHP: 345,
+    maxMP: 160,
+    selected: false, 
+    isActive: false, 
+    highlighted: false},
+
+    {name: 'Vincent', 
+    portrait: 'images/Vincent.jpeg', 
+    level: 7, 
+    maxHP: 345,
+    maxMP: 160,
+    selected: false, 
+    isActive: false, 
+    highlighted: false}, 
+
+    {name: 'Cid', 
+    portrait: 'images/Cid.jpeg', 
+    level: 7, 
+    maxHP: 345,
+    maxMP: 160,
+    selected: false, 
+    isActive: false, 
     highlighted: false}
 ]
 
+
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXNOTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+// this needs to be merged into"party" to address the one party array, so all references
+// to reserveParty need to be reviewed
 let reserveParty = [
     {name: 'Aerith', 
     portrait: 'images/Aerith.jpeg', 
@@ -212,6 +327,8 @@ let reserveParty = [
     highlighted: false}
 ]
 
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXNOTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+// needs adjustment to one party array
 function displayPartyMembers() {
     console.log("Active Party: ")
     console.table(activeParty)
@@ -220,6 +337,10 @@ function displayPartyMembers() {
     return true;
 }
 
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXNOTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+// this function will need to be rewritten. It reflects the 2 array system (active/reserve)
+// that is going away. This function will be simplier, toggling the boolean value isActive
+// on members of the party.
 function swapPartyMembers() {
     // swapping out a party member, cloud for squall
     let activeSelected = activeParty.find(partyMember => partyMember.selected === true);
@@ -286,6 +407,8 @@ let charLevel3 = document.getElementById('charLevel3');
 let charHP3 = document.getElementById('charHP3');
 let charMP3 = document.getElementById('charMP3');
 
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXNOTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+// references to activeParty below, need to adjust
 function populateFirstCharacter() {
     portrait1.src = activeParty[0].portrait;
     charName1.innerText = activeParty[0].name;
@@ -294,6 +417,8 @@ function populateFirstCharacter() {
     charMP1.innerText = `${activeParty[0].maxMP}/${activeParty[0].maxMP}`;
 }
 
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXNOTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+// references to activeParty below, need to adjust
 function populateSecondCharacter() {
     portrait2.src = activeParty[1].portrait;
     charName2.innerText = activeParty[1].name;
@@ -302,6 +427,8 @@ function populateSecondCharacter() {
     charMP2.innerText = `${activeParty[1].maxMP}/${activeParty[1].maxMP}`;
 }
 
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXNOTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+// references to activeParty below, need to adjust
 function populateThirdCharacter() {
     portrait3.src = activeParty[2].portrait;
     charName3.innerText = activeParty[2].name;
@@ -310,6 +437,8 @@ function populateThirdCharacter() {
     charMP3.innerText = `${activeParty[2].maxMP}/${activeParty[2].maxMP}`;
 }
 
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXNOTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+// references to activeParty below, need to adjust
 function populateReserveParty() {
     reserveParty.forEach((character, index) => {
         let portrait = document.getElementById('reservePortrait' + (index + 1).toString());
@@ -318,6 +447,10 @@ function populateReserveParty() {
     });
 }
 
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXNOTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        // this now needs to be rewritten to address the single party array
+        // instead of looking at the activePartyArray (which is going away), this should
+        // now check for the three party members that have "isActive: true"
 function populateParty() {
     activeParty.forEach((character, index) => {
         // for each character in the active party (an array with 3 objects), we populate
@@ -350,6 +483,7 @@ function populateParty() {
         
     });
 }
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXNOTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 function swapAndPop(){
     swapPartyMembers();

@@ -41,12 +41,12 @@ body {
 .cursor {
     height: 40px;
     width: auto;
-    
     z-index: 99;
     position: relative;
     transition: all .5s;
     transition-timing-function: ease-in-out;
 }
+
 
 .cursorMain {
     margin-left: 800px;
@@ -57,6 +57,10 @@ body {
     position: absolute;
     margin-top: 70px;
     margin-left: -10px;
+}
+
+.cursorReserve {
+    margin-left: -50px;
 }
 
 .leftPosition {
@@ -105,6 +109,10 @@ li {
 .middle {
     display: flex;
     z-index: 1;
+}
+
+.middlePHS {
+    height: 659px;
 }
 
 .main {
@@ -276,8 +284,16 @@ ul {
 
 .selected {
     box-sizing: border-box;
-    height: 200px;
+    height: 220px;
     margin: -4px;
+}
+
+#previewPanel {
+    padding: 17px;
+}
+
+#previewPortrait {
+    margin-left: -48px;
 }
 
 .reserveParty {
@@ -300,3 +316,4 @@ ul {
     transition: all .5s;
     transition-timing-function: linear;
 }
+

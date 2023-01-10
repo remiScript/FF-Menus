@@ -31,26 +31,30 @@ setInterval(formatTime, 1000);
 //----------------------------------- Cursor Start ------------------------------//
 //-------------------------------------------------------------------------------//
 
-let pos = 0;
 
-const cursor = document.getElementsByClassName("cursor");
-
+const cursors = document.getElementsByClassName("cursor");
+let cursorArray = Array.from(cursors);
 function animateCursor() {
-    Array.from(cursor).forEach(instance => {
-        instance.classList.toggle('leftPosition');
+    Array.from(cursors).forEach((instance, index) => {
+        if (party[index].selected == true) {
+            return;
+        } else {
+            instance.classList.toggle('leftPosition');
+        }
+        
     });
     // cursor.classList.toggle('leftPosition');
 }
 
 function blinkCursor() {
-    Array.from(cursor).forEach((instance, index) => {
-        if (activeParty[index].highlighted == true) {
+    cursorArray.forEach((instance, index) => {
+        if (party[index].isActive == true && party[index].selected == true) {
             instance.classList.toggle('hidden');
         }
     });
 }
 
-animationTimer = setInterval(animateCursor, 700);
+let animationTimer = setInterval(animateCursor, 700);
 
 function isAnimationRunning() {
     return !!animateCursor;
@@ -58,8 +62,9 @@ function isAnimationRunning() {
 
 function renderCursorPHS() {
     // set the "highlighted" property of the top portrait in the active party to true
-    activeParty.forEach((character, index) => {
+    party.forEach((character, index) => {
         let charContainer = document.getElementById('charContainerPHS' + (index + 1).toString());
+        // console.log(charContainer);
         if (index == pos) {
             character.highlighted = true;
             let img = charContainer.children[0];
@@ -68,39 +73,118 @@ function renderCursorPHS() {
             character.highlighted = false;
             let img = charContainer.children[0];
             img.classList.add('hidden');
+            // console.log('hidden')
         }
         
     });
 }
 
-//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXNOTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-// needs rewrite
+let pos = 0;
+
 function moveCursorUp() {
     // when key is pressed, move one position down
     // if you are at the bottom row, move to the top instead
     // "movement" isn't really happening, we are removing and adding the cursor to
     // another place in the DOM, next to another portrait
-    pos--;
-    if (pos == -1) {
-        pos = 2;
+    // here we are checking to see if we've already selected a character. If we 
+    // haven't, we must be in the left panel, and if someone is already selected
+    // we must be in the right panel.
+    if ((party.filter(character => character.selected == true)).length == 0) {
+        pos--;
+        if (pos == -1) {
+            pos = 2;
+        }
+    } else {
+        pos--;
+        if (pos == 2) {
+            pos = 8;
+        }
+        let reserve = party.filter(character => character.isActive == false);
+        previewCharacter(reserve[pos]);
     }
-    console.log("position: " + pos);
     renderCursorPHS();
+    
+    console.log(pos);
 }
 
-//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXNOTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-// needs rewrite
 function moveCursorDown() {
     // when key is pressed, move one position down
     // if you are at the bottom row, move to the top instead
     // "movement" isn't really happening, we are removing and adding the cursor to
     // another place in the DOM, next to another portrait
-    pos++;
-    if (pos == 3) {
-        pos = 0;
+    
+    if ((party.filter(character => character.selected == true)).length == 0) {
+        pos++;
+        if (pos == 3) {
+            pos = 0;
+        }
+    } else {
+        pos++;
+        if (pos == 9) {
+            pos = 3;
+        } console.log(pos);
+        let reserve = party.filter(character => character.isActive == false);
+        previewCharacter(reserve[pos]);
     }
-    console.log("position: " + pos);
     renderCursorPHS();
+    
+}
+
+function previewCharacter(char) {
+    // grab the div
+    let previewDiv = document.getElementById('previewPanel');
+
+    // wipe the old contents out
+    previewDiv.innerHTML = '';
+
+    // this holds the image
+    let previewPortraitDiv = document.createElement('div');
+    previewPortraitDiv.setAttribute('class', 'portrait');
+    previewPortraitDiv.setAttribute('id', 'previewPortrait');
+
+    // this IS the image
+    let previewPortraitDivImg = document.createElement('img');
+    previewPortraitDivImg.setAttribute('src', char.portrait);
+
+    // this holds the info
+    let previewInfoDiv = document.createElement('div');
+    previewInfoDiv.setAttribute('class', 'info');
+    // ---------- CHATGPT take the wheel--------------------------//
+
+    let charName = document.createElement("p");
+    charName.setAttribute("class", "heading");
+    charName.textContent = char.name;
+    previewInfoDiv.appendChild(charName);
+
+    let charLevel = document.createElement("p");
+    charLevel.setAttribute("class", "level");
+    charLevel.innerHTML = `<span class="label">LV</span><span class="bold"> ${char.level}</span>`;
+    previewInfoDiv.appendChild(charLevel);
+
+    let charHP = document.createElement("p");
+    charHP.setAttribute("class", "hp");
+    charHP.innerHTML = `<span class="label">HP</span><span class="bold"> ${char.maxHP}/${char.maxHP}</span>`;
+    previewInfoDiv.appendChild(charHP);
+
+    let hpBar = document.createElement("div");
+    hpBar.setAttribute("class", "hpBar");
+    hpBar.innerHTML = '<span style="visibility: hidden;">.</span>';
+    previewInfoDiv.appendChild(hpBar);
+
+    let charMP = document.createElement("p");
+    charMP.innerHTML = `<span class="label">MP</span> <span class="mpValueAdjust"><span class="bold"> ${char.maxMP}/${char.maxMP}</span></span>`;
+    previewInfoDiv.appendChild(charMP);
+
+    let mpBar = document.createElement("div");
+    mpBar.setAttribute("class", "mpBar");
+    mpBar.innerHTML = '<span style="visibility: hidden;">.</span>';
+    previewInfoDiv.appendChild(mpBar);
+    // ---------- CHATGPT take the wheel--------------------------//
+
+    // append things to other things!
+    previewDiv.appendChild(previewPortraitDiv);
+    previewDiv.appendChild(previewInfoDiv);
+    previewPortraitDiv.appendChild(previewPortraitDivImg);
 }
 
 
@@ -108,35 +192,47 @@ function moveCursorDown() {
 // Write this as a function for the PHS screen only. Put this function in another file and import it
 // to the PHS screen html file. The main menu screen will have its own X button function. 
 // The X button only does 2 things
-// if an active party member is highlighted, it should :
-    // select them
-    // de-highlight them
-    // make the cursor stop animating
-    // make the cursor blink
-    // play a sound effect
-    // highlight the first inactive party member portrait
-    // disable up/down arrow functionality for the active party
-    // enable the up/down arrow functionality for the reserve party
-    // display the stats of the highlighted reserve party member in the preview panel
-// if an inactive party member is highlighted, it should:
-    // select them
-    // de-highlight them
-    // swap the two selected party members
-    // disable the preview panel
-    // de-select both party members
-    // re-highlight the first active party member portrait
-    // stop the blinking
-    // play a sound effect
-    // restart the cursor animation
-    // disable arrow functionality for reserve party
-    // re-enable arrow functionality for active party
+
 function xButtonPHS() {
-    // Everything in here will need to be rewritten (probably)
-    //if we're on the active party, step 1, make cursor blink
-    clearInterval(animationTimer);
-    setInterval(blinkCursor, 25);
-    // "move" cursor to index[0] of reserve party
-    // adjust arrow functions?
+    let active = party.filter(character => character.isActive == true);
+    active.forEach((character, index) => {
+    // if an active party member is highlighted, it should :
+        if (character.highlighted == true) {        
+            // select them
+            character.selected = true;
+            // de-highlight them
+            character.highlighted = false;
+            // make the cursor stop animating
+            clearInterval(animationTimer);
+            // make the cursor blink
+            setInterval(blinkCursor, 25);
+            // play a sound effect
+            // highlight the first inactive party member portrait
+            let reserve = party.filter(character => character.isActive == false);
+            reserve[0].highlighted = true;
+            pos = 3;
+            renderCursorPHS();
+            setInterval(animateCursor, 700);
+            // disable up/down arrow functionality for the active party
+            // enable the up/down arrow functionality for the reserve party
+            // display the stats of the highlighted reserve party member in the preview panel
+            previewCharacter(reserve[0]);
+        } 
+    // if an inactive party member is highlighted, it should:
+        else { 
+            // select them
+            // de-highlight them
+            // swap the two selected party members
+            // disable the preview panel
+            // de-select both party members
+            // re-highlight the first active party member portrait
+            // stop the blinking
+            // play a sound effect
+            // restart the cursor animation
+            // disable arrow functionality for reserve party
+            // re-enable arrow functionality for active party
+        }
+    });
     console.log('x button')   
 }
 document.addEventListener('keydown', function(event) {
@@ -168,37 +264,17 @@ document.addEventListener('keydown', function(event) {
 //------------------------------------ Party START-------------------------------//
 //-------------------------------------------------------------------------------//
 
-//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXNOTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXNOTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXNOTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-// Make both parties one array, have a value of isActive set to true/false
 // Have the x button array functionality work one way for the PHS page, one way for the main
-
-
-
-//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXNOTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-// this needs to be renamed to "party" to address the one party array, so all references
-// to activeParty need to be reviewed
-let activeParty = [
+let party = [
     {name: 'Cloud', 
     portrait: 'images/Cloud.jpeg', 
     level: 7, 
     maxHP: 345,
     maxMP: 160,
     isActive: true, 
-    selected: true,
-    highlighted: false}, 
+    selected: false,
+    highlighted: true}, 
 
     {name: 'Barret', 
     portrait: 'images/Barret.jpeg', 
@@ -224,7 +300,7 @@ let activeParty = [
     maxHP: 345,
     maxMP: 160, 
     isActive: false, 
-    selected: true,
+    selected: false,
     highlighted: false},
 
     {name: 'Red XIII', 
@@ -273,67 +349,15 @@ let activeParty = [
     highlighted: false}
 ]
 
-
-//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXNOTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-// this needs to be merged into"party" to address the one party array, so all references
-// to reserveParty need to be reviewed
-let reserveParty = [
-    {name: 'Aerith', 
-    portrait: 'images/Aerith.jpeg', 
-    level: 7, 
-    maxHP: 345,
-    maxMP: 160,
-    selected: true,
-    highlighted: false},
-
-    {name: 'Red XIII', 
-    portrait: 'images/Red XIII.jpeg', 
-    level: 7,
-    maxHP: 345,
-    maxMP: 160,
-    selected: false,
-    highlighted: false}, 
-
-    {name: 'Yuffie', 
-    portrait: 'images/Yuffie.jpeg', 
-    level: 7, 
-    maxHP: 345,
-    maxMP: 160,
-    selected: false,
-    highlighted: false}, 
-
-    {name: 'Cait Sith', 
-    portrait: 'images/Cait Sith.jpeg', 
-    level: 7, 
-    maxHP: 345,
-    maxMP: 160,
-    selected: false,
-    highlighted: false},
-
-    {name: 'Vincent', 
-    portrait: 'images/Vincent.jpeg', 
-    level: 7, 
-    maxHP: 345,
-    maxMP: 160,
-    selected: false,
-    highlighted: false}, 
-
-    {name: 'Cid', 
-    portrait: 'images/Cid.jpeg', 
-    level: 7, 
-    maxHP: 345,
-    maxMP: 160,
-    selected: false,
-    highlighted: false}
-]
-
-//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXNOTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-// needs adjustment to one party array
+// rewritten, needs testing
 function displayPartyMembers() {
     console.log("Active Party: ")
-    console.table(activeParty)
-    console.log("Reserve Party: ")
-    console.table(reserveParty)
+    party.forEach(member => {
+        if (member.isActive == true) {
+            console.log(member.name);
+        }
+        
+    });
     return true;
 }
 
@@ -343,46 +367,27 @@ function displayPartyMembers() {
 // on members of the party.
 function swapPartyMembers() {
     // swapping out a party member, cloud for squall
-    let activeSelected = activeParty.find(partyMember => partyMember.selected === true);
-    let activeIndex = activeParty.findIndex(partyMember => partyMember.selected === true);
-    let reserveSelected = reserveParty.find(partyMember => partyMember.selected === true);
-    let reserveIndex = reserveParty.findIndex(partyMember => partyMember.selected === true);
+    let activeSelected = party.find(partyMember => ((partyMember.selected === true) && (partyMember.isActive === true)));
+    console.log('AS: ' + activeSelected.name);
+    let activeIndex = party.indexOf(activeSelected);
+    let reserveSelected = party.find(partyMember =>((partyMember.selected === true) && (partyMember.isActive === false)));
+    let reserveIndex = party.indexOf(reserveSelected);
+    console.log('RS: ' + reserveSelected.name);
     
-    // add cloud to reserve party
-    reserveParty.unshift(activeSelected);
+    // swap cloud to reserve party
+    activeSelected.isActive = false;
+    activeSelected.selected = false;
+    activeSelected.highlighted = false;
         
-    // add squall to the active party
-    activeParty.unshift(reserveSelected);
-    console.table(activeParty);
-
-    // remove cloud from active party
-    activeParty.forEach(member => {
-        if (member.name === activeSelected.name){
-            console.log(member.name + ' match')
-            console.log(activeIndex)
-            activeParty.splice(activeIndex + 1, 1)
-            
-        } else {
-            console.log(member.name + ' no match')
-        }
-    });
-    
-    // remove squall from reserve party
-    reserveParty.forEach(member => {
-        if (member.name === reserveSelected.name){
-            console.log(member.name + ' match')
-            console.log(reserveIndex)
-            reserveParty.splice(reserveIndex + 1, 1)
-            
-        } else {
-            console.log(member.name + ' no match')
-        }
-    });
+    // swap squall to the active party
+    reserveSelected.isActive = true;
+    reserveSelected.selected = false;
+    reserveSelected.highlighted = false;
 
     // activeSelected.selected = false;
     // reserveSelected.selected = false;    
 
-    console.log('updated!');
+    console.table(party);
 }
 
 //-------------------------------------------------------------------------------//
@@ -407,52 +412,39 @@ let charLevel3 = document.getElementById('charLevel3');
 let charHP3 = document.getElementById('charHP3');
 let charMP3 = document.getElementById('charMP3');
 
-//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXNOTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-// references to activeParty below, need to adjust
+
 function populateFirstCharacter() {
-    portrait1.src = activeParty[0].portrait;
-    charName1.innerText = activeParty[0].name;
-    charLevel1.innerText = activeParty[0].level;
-    charHP1.innerText = ` ${activeParty[0].maxHP}/${activeParty[0].maxHP}`;
-    charMP1.innerText = `${activeParty[0].maxMP}/${activeParty[0].maxMP}`;
+    let active = party.filter(member => member.isActive == true);
+    console.table(active);
+    portrait1.src = active[0].portrait;
+    charName1.innerText = active[0].name;
+    charLevel1.innerText = active[0].level;
+    charHP1.innerText = ` ${active[0].maxHP}/${active[0].maxHP}`;
+    charMP1.innerText = `${active[0].maxMP}/${active[0].maxMP}`;
 }
 
-//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXNOTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-// references to activeParty below, need to adjust
 function populateSecondCharacter() {
-    portrait2.src = activeParty[1].portrait;
-    charName2.innerText = activeParty[1].name;
-    charLevel2.innerText = activeParty[1].level;
-    charHP2.innerText = ` ${activeParty[1].maxHP}/${activeParty[1].maxHP}`;
-    charMP2.innerText = `${activeParty[1].maxMP}/${activeParty[1].maxMP}`;
+    let active = party.filter(member => member.isActive == true);
+    portrait2.src = active[1].portrait;
+    charName2.innerText = active[1].name;
+    charLevel2.innerText = active[1].level;
+    charHP2.innerText = ` ${active[1].maxHP}/${active[1].maxHP}`;
+    charMP2.innerText = `${active[1].maxMP}/${active[1].maxMP}`;
 }
 
-//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXNOTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-// references to activeParty below, need to adjust
 function populateThirdCharacter() {
-    portrait3.src = activeParty[2].portrait;
-    charName3.innerText = activeParty[2].name;
-    charLevel3.innerText = activeParty[2].level;
-    charHP3.innerText = ` ${activeParty[2].maxHP}/${activeParty[2].maxHP}`;
-    charMP3.innerText = `${activeParty[2].maxMP}/${activeParty[2].maxMP}`;
+    let active = party.filter(member => member.isActive == true);
+    portrait3.src = active[2].portrait;
+    charName3.innerText = active[2].name;
+    charLevel3.innerText = active[2].level;
+    charHP3.innerText = ` ${active[2].maxHP}/${active[2].maxHP}`;
+    charMP3.innerText = `${active[2].maxMP}/${active[2].maxMP}`;
 }
 
-//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXNOTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-// references to activeParty below, need to adjust
-function populateReserveParty() {
-    reserveParty.forEach((character, index) => {
-        let portrait = document.getElementById('reservePortrait' + (index + 1).toString());
-        portrait.src = character.portrait;
-        
-    });
-}
 
-//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXNOTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-        // this now needs to be rewritten to address the single party array
-        // instead of looking at the activePartyArray (which is going away), this should
-        // now check for the three party members that have "isActive: true"
-function populateParty() {
-    activeParty.forEach((character, index) => {
+function populateActiveParty() {
+    let active = party.filter(member => member.isActive == true);
+    active.forEach((character, index) => {
         // for each character in the active party (an array with 3 objects), we populate
         // their information to each of the 3 slots in the main menu
         // this function should run at page load, whenever the main menu is pulled up
@@ -477,13 +469,20 @@ function populateParty() {
         let charMP = document.getElementById('charMP' + (index + 1).toString());
         charMP.innerText = `${character.maxMP}/${character.maxMP}`;
     });
-    reserveParty.forEach((character, index) => {
+}
+
+function populateReserveParty() {
+    let reserve = party.filter(member => member.isActive == false);
+    reserve.forEach((character, index) => {
         let portrait = document.getElementById('reservePortrait' + (index + 1).toString());
-        portrait.src = character.portrait;
-        
+        portrait.src = character.portrait; 
     });
 }
-//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXNOTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+function populateParty() {
+    populateActiveParty();
+    populateReserveParty();
+}
 
 function swapAndPop(){
     swapPartyMembers();

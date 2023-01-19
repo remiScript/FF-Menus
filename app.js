@@ -30,7 +30,7 @@ setInterval(formatTime, 1000);
 //-------------------------------------------------------------------------------//
 //----------------------------------- Cursor Start ------------------------------//
 //-------------------------------------------------------------------------------//
-
+let pos = 0;
 
 const cursors = document.getElementsByClassName("cursor");
 let cursorArray = Array.from(cursors);
@@ -79,7 +79,7 @@ function renderCursorPHS() {
     });
 }
 
-let pos = 0;
+
 
 function moveCursorUp() {
     // when key is pressed, move one position down
@@ -100,31 +100,31 @@ function moveCursorUp() {
             pos = 8;
         }
         let reserve = party.filter(character => character.isActive == false);
-        previewCharacter(reserve[pos]);
+        previewCharacter(reserve[pos - 3]);
     }
     renderCursorPHS();
-    
-    console.log(pos);
 }
 
 function moveCursorDown() {
     // when key is pressed, move one position down
     // if you are at the bottom row, move to the top instead
-    // "movement" isn't really happening, we are removing and adding the cursor to
-    // another place in the DOM, next to another portrait
+    // "movement" isn't really happening, we are revealing and hiding cursors
+    // there's one next to each portrait, but only the active one is visible (css)
     
     if ((party.filter(character => character.selected == true)).length == 0) {
+        // console.log('no one is selected')
         pos++;
         if (pos == 3) {
             pos = 0;
         }
     } else {
+        // console.log('someone is selected')
         pos++;
         if (pos == 9) {
             pos = 3;
-        } console.log(pos);
+        } // console.log('position: ' + pos);
         let reserve = party.filter(character => character.isActive == false);
-        previewCharacter(reserve[pos]);
+        previewCharacter(reserve[pos - 3]);
     }
     renderCursorPHS();
     
@@ -149,7 +149,6 @@ function previewCharacter(char) {
     // this holds the info
     let previewInfoDiv = document.createElement('div');
     previewInfoDiv.setAttribute('class', 'info');
-    // ---------- CHATGPT take the wheel--------------------------//
 
     let charName = document.createElement("p");
     charName.setAttribute("class", "heading");
@@ -179,7 +178,6 @@ function previewCharacter(char) {
     mpBar.setAttribute("class", "mpBar");
     mpBar.innerHTML = '<span style="visibility: hidden;">.</span>';
     previewInfoDiv.appendChild(mpBar);
-    // ---------- CHATGPT take the wheel--------------------------//
 
     // append things to other things!
     previewDiv.appendChild(previewPortraitDiv);
@@ -194,45 +192,61 @@ function previewCharacter(char) {
 // The X button only does 2 things
 
 function xButtonPHS() {
-    let active = party.filter(character => character.isActive == true);
-    active.forEach((character, index) => {
-    // if an active party member is highlighted, it should :
-        if (character.highlighted == true) {        
-            // select them
-            character.selected = true;
-            // de-highlight them
-            character.highlighted = false;
-            // make the cursor stop animating
-            clearInterval(animationTimer);
-            // make the cursor blink
-            setInterval(blinkCursor, 25);
-            // play a sound effect
-            // highlight the first inactive party member portrait
-            let reserve = party.filter(character => character.isActive == false);
-            reserve[0].highlighted = true;
-            pos = 3;
-            renderCursorPHS();
-            setInterval(animateCursor, 700);
-            // disable up/down arrow functionality for the active party
-            // enable the up/down arrow functionality for the reserve party
-            // display the stats of the highlighted reserve party member in the preview panel
-            previewCharacter(reserve[0]);
-        } 
-    // if an inactive party member is highlighted, it should:
-        else { 
-            // select them
-            // de-highlight them
-            // swap the two selected party members
-            // disable the preview panel
-            // de-select both party members
-            // re-highlight the first active party member portrait
-            // stop the blinking
-            // play a sound effect
-            // restart the cursor animation
-            // disable arrow functionality for reserve party
-            // re-enable arrow functionality for active party
-        }
-    });
+    if ((party.filter(character => character.selected == true)).length == 0) {
+        let active = party.filter(character => character.isActive == true);
+        active.forEach((character, index) => {
+        // if an active party member is highlighted, it should :
+            if (character.highlighted == true) {        
+                // select them
+                character.selected = true;
+                // de-highlight them
+                character.highlighted = false;
+                // make the cursor stop animating
+                clearInterval(animationTimer);
+                // make the cursor blink
+                setInterval(blinkCursor, 25);
+                // play a sound effect
+                // highlight the first inactive party member portrait
+                let reserve = party.filter(character => character.isActive == false);
+                reserve[0].highlighted = true;
+                pos = 3;
+                renderCursorPHS();
+                setInterval(animateCursor, 700);
+                // disable up/down arrow functionality for the active party
+                // enable the up/down arrow functionality for the reserve party
+                // display the stats of the highlighted reserve party member in the preview panel
+                previewCharacter(reserve[0]);
+            } 
+        });
+    } else {
+        let reserve = party.filter(character => character.isActive == false);
+        reserve.forEach((character, index) => {
+        // if an inactive party member is highlighted, it should:
+            if(character.highlighted == true) {
+                // select them
+                character.selected = true;
+                // de-highlight them
+                character.highlighted = false;
+                // swap the two selected party members
+                swapAndPop()
+                // disable the preview panel
+                // de-select both party members (happens in swapPartyMembers function)
+                // re-highlight the first active party member portrait
+                let first = party.find(character => character.isActive);
+                first.highlighted = true;
+                // stop the blinking
+                // play a sound effect
+                // restart the cursor animation
+                // disable arrow functionality for reserve party
+                // re-enable arrow functionality for active party
+                pos = 0;
+            } 
+        });
+
+    }
+
+
+
     console.log('x button')   
 }
 document.addEventListener('keydown', function(event) {
@@ -368,11 +382,15 @@ function displayPartyMembers() {
 function swapPartyMembers() {
     // swapping out a party member, cloud for squall
     let activeSelected = party.find(partyMember => ((partyMember.selected === true) && (partyMember.isActive === true)));
+    let aIndex = party.indexOf(activeSelected);
+    console.log(aIndex);
     console.log('AS: ' + activeSelected.name);
-    let activeIndex = party.indexOf(activeSelected);
+    //let activeIndex = party.indexOf(activeSelected);
     let reserveSelected = party.find(partyMember =>((partyMember.selected === true) && (partyMember.isActive === false)));
-    let reserveIndex = party.indexOf(reserveSelected);
+    //let reserveIndex = party.indexOf(reserveSelected);
     console.log('RS: ' + reserveSelected.name);
+
+
     
     // swap cloud to reserve party
     activeSelected.isActive = false;
@@ -387,6 +405,8 @@ function swapPartyMembers() {
     // activeSelected.selected = false;
     // reserveSelected.selected = false;    
 
+    // party.indexOf(activeSelected) = party.indexOf(reserveSelected);
+    // indexOf(reserveSelected) = aIndex;
     console.table(party);
 }
 
@@ -485,6 +505,7 @@ function populateParty() {
 }
 
 function swapAndPop(){
+    console.log('test')
     swapPartyMembers();
     populateParty();
 }

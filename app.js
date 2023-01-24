@@ -5,6 +5,8 @@ let pos = 0;
 
 const cursors = document.getElementsByClassName("cursor");
 let cursorArray = Array.from(cursors);
+let animationTimer = setInterval(animateCursor, 700);
+
 function animateCursor() {
     Array.from(cursors).forEach((instance, index) => {
         if (party[index].selected == true) {
@@ -17,6 +19,10 @@ function animateCursor() {
     // cursor.classList.toggle('leftPosition');
 }
 
+function isAnimationRunning() {
+    return !!animateCursor;
+}
+
 function blinkCursor() {
     cursorArray.forEach((instance, index) => {
         if (party[index].isActive == true && party[index].selected == true) {
@@ -24,13 +30,6 @@ function blinkCursor() {
         }
     });
 }
-
-let animationTimer = setInterval(animateCursor, 700);
-
-function isAnimationRunning() {
-    return !!animateCursor;
-}
-
 function renderCursorPHS() {
     // set the "highlighted" property of the top portrait in the active party to true
     party.forEach((character, index) => {
@@ -205,12 +204,14 @@ function xButtonPHS() {
                 // re-highlight the first active party member portrait
                 let first = party.find(character => character.isActive);
                 first.highlighted = true;
+                console.log(first);
                 // stop the blinking
                 // play a sound effect
                 // restart the cursor animation
                 // disable arrow functionality for reserve party
                 // re-enable arrow functionality for active party
                 pos = 0;
+                renderCursorPHS();
             } 
         });
 
@@ -353,18 +354,11 @@ function displayPartyMembers() {
 function swapPartyMembers() {
     // swapping out a party member, cloud for squall
     let activeSelected = party.find(partyMember => ((partyMember.selected === true) && (partyMember.isActive === true)));
-    let aIndex = party[activeSelected];
-    // console.log(aIndex);
-    console.log('AS: ' + activeSelected.name);
-    //let activeIndex = party.indexOf(activeSelected);
+    let aIndex = party.indexOf(activeSelected);
+
     let reserveSelected = party.find(partyMember =>((partyMember.selected === true) && (partyMember.isActive === false)));
-    let rIndex = party[reserveSelected];
-    console.log('RS: ' + reserveSelected.name);
-
-    party[activeSelected] = rIndex;
-    party[reserveSelected] = aIndex;
-
-    
+    let rIndex = party.indexOf(reserveSelected);
+        
     // swap cloud to reserve party
     activeSelected.isActive = false;
     activeSelected.selected = false;
@@ -378,6 +372,12 @@ function swapPartyMembers() {
     // activeSelected.selected = false;
     // reserveSelected.selected = false;    
 
+    
+    let temp = party[aIndex];
+    
+    party[aIndex] = party[rIndex];
+    console.log("temp: " + temp)
+    party[rIndex] = temp;
     
     // indexOf(reserveSelected) = aIndex;
     console.table(party);

@@ -1,33 +1,4 @@
 //-------------------------------------------------------------------------------//
-//------------------------------------ Timer START ------------------------------//
-//-------------------------------------------------------------------------------//
-
-let counter = 0;
-let minutes = 0;
-let hours = 0;
-let gameClock = document.getElementById("gameTime");
-
-function formatTime() {
-    counter += 1;
-    if (counter >= 60) {
-        counter = 0;
-        minutes++;
-        if (minutes >= 60) {
-            minutes = 0;
-            hours++;
-        }
-    }
-    gameClock.innerText = hours + ":" + minutes + ":" + counter;
-};
-
-setInterval(formatTime, 1000);
-
-
-//-------------------------------------------------------------------------------//
-//------------------------------------ Timer END --------------------------------//
-//-------------------------------------------------------------------------------//
-
-//-------------------------------------------------------------------------------//
 //----------------------------------- Cursor Start ------------------------------//
 //-------------------------------------------------------------------------------//
 let pos = 0;
@@ -382,14 +353,16 @@ function displayPartyMembers() {
 function swapPartyMembers() {
     // swapping out a party member, cloud for squall
     let activeSelected = party.find(partyMember => ((partyMember.selected === true) && (partyMember.isActive === true)));
-    let aIndex = party.indexOf(activeSelected);
-    console.log(aIndex);
+    let aIndex = party[activeSelected];
+    // console.log(aIndex);
     console.log('AS: ' + activeSelected.name);
     //let activeIndex = party.indexOf(activeSelected);
     let reserveSelected = party.find(partyMember =>((partyMember.selected === true) && (partyMember.isActive === false)));
-    //let reserveIndex = party.indexOf(reserveSelected);
+    let rIndex = party[reserveSelected];
     console.log('RS: ' + reserveSelected.name);
 
+    party[activeSelected] = rIndex;
+    party[reserveSelected] = aIndex;
 
     
     // swap cloud to reserve party
@@ -405,7 +378,7 @@ function swapPartyMembers() {
     // activeSelected.selected = false;
     // reserveSelected.selected = false;    
 
-    // party.indexOf(activeSelected) = party.indexOf(reserveSelected);
+    
     // indexOf(reserveSelected) = aIndex;
     console.table(party);
 }

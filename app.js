@@ -1,3 +1,23 @@
+let counter = 0;
+let minutes = 0;
+let hours = 0;
+let gameClock = document.getElementById("gameTime");
+
+function formatTime() {
+    counter += 1;
+    if (counter >= 60) {
+        counter = 0;
+        minutes++;
+        if (minutes >= 60) {
+            minutes = 0;
+            hours++;
+        }
+    }
+    gameClock.innerText = hours + ":" + minutes + ":" + counter;
+};
+
+setInterval(formatTime, 1000);
+
 //-------------------------------------------------------------------------------//
 //----------------------------------- Cursor Start ------------------------------//
 //-------------------------------------------------------------------------------//
@@ -17,10 +37,6 @@ function animateCursor() {
         
     });
     // cursor.classList.toggle('leftPosition');
-}
-
-function isAnimationRunning() {
-    return !!animateCursor;
 }
 
 function blinkCursor() {
@@ -155,6 +171,16 @@ function previewCharacter(char) {
     previewPortraitDiv.appendChild(previewPortraitDivImg);
 }
 
+function clearPreviewPanel() {
+    // grab the div
+    let previewDiv = document.getElementById('previewPanel');
+
+    // wipe the old contents out
+    previewDiv.innerHTML = '';
+}
+
+
+
 
 //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXNOTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 // Write this as a function for the PHS screen only. Put this function in another file and import it
@@ -212,6 +238,7 @@ function xButtonPHS() {
                 // re-enable arrow functionality for active party
                 pos = 0;
                 renderCursorPHS();
+                clearPreviewPanel();
             } 
         });
 
@@ -221,17 +248,19 @@ function xButtonPHS() {
 
     console.log('x button')   
 }
-document.addEventListener('keydown', function(event) {
-    if (event.key === 'ArrowDown') {
-        moveCursorDown();
-    }
-})
 
 document.addEventListener('keydown', function(event) {
     if (event.key === 'ArrowUp') {
         moveCursorUp();
     }
 })
+
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'ArrowDown') {
+        moveCursorDown();
+    }
+})
+
 
 
 document.addEventListener('keydown', function(event) {
@@ -335,18 +364,6 @@ let party = [
     highlighted: false}
 ]
 
-// rewritten, needs testing
-function displayPartyMembers() {
-    console.log("Active Party: ")
-    party.forEach(member => {
-        if (member.isActive == true) {
-            console.log(member.name);
-        }
-        
-    });
-    return true;
-}
-
 //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXNOTEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 // this function will need to be rewritten. It reflects the 2 array system (active/reserve)
 // that is going away. This function will be simplier, toggling the boolean value isActive
@@ -386,53 +403,6 @@ function swapPartyMembers() {
 //-------------------------------------------------------------------------------//
 //------------------------------------ PARTY END --------------------------------//
 //-------------------------------------------------------------------------------//
-
-let portrait1 = document.getElementById('portrait1');
-let charName1 = document.getElementById('charName1');
-let charLevel1 = document.getElementById('charLevel1');
-let charHP1 = document.getElementById('charHP1');
-let charMP1 = document.getElementById('charMP1');
-
-let portrait2 = document.getElementById('portrait2');
-let charName2 = document.getElementById('charName2');
-let charLevel2 = document.getElementById('charLevel2');
-let charHP2 = document.getElementById('charHP2');
-let charMP2 = document.getElementById('charMP2');
-
-let portrait3 = document.getElementById('portrait3');
-let charName3 = document.getElementById('charName3');
-let charLevel3 = document.getElementById('charLevel3');
-let charHP3 = document.getElementById('charHP3');
-let charMP3 = document.getElementById('charMP3');
-
-
-function populateFirstCharacter() {
-    let active = party.filter(member => member.isActive == true);
-    console.table(active);
-    portrait1.src = active[0].portrait;
-    charName1.innerText = active[0].name;
-    charLevel1.innerText = active[0].level;
-    charHP1.innerText = ` ${active[0].maxHP}/${active[0].maxHP}`;
-    charMP1.innerText = `${active[0].maxMP}/${active[0].maxMP}`;
-}
-
-function populateSecondCharacter() {
-    let active = party.filter(member => member.isActive == true);
-    portrait2.src = active[1].portrait;
-    charName2.innerText = active[1].name;
-    charLevel2.innerText = active[1].level;
-    charHP2.innerText = ` ${active[1].maxHP}/${active[1].maxHP}`;
-    charMP2.innerText = `${active[1].maxMP}/${active[1].maxMP}`;
-}
-
-function populateThirdCharacter() {
-    let active = party.filter(member => member.isActive == true);
-    portrait3.src = active[2].portrait;
-    charName3.innerText = active[2].name;
-    charLevel3.innerText = active[2].level;
-    charHP3.innerText = ` ${active[2].maxHP}/${active[2].maxHP}`;
-    charMP3.innerText = `${active[2].maxMP}/${active[2].maxMP}`;
-}
 
 
 function populateActiveParty() {
@@ -483,5 +453,5 @@ function swapAndPop(){
     populateParty();
 }
 
-populateParty();
+window.onload = populateParty();
 renderCursorPHS();

@@ -50,7 +50,7 @@ body {
 
 .cursorMain {
     margin-left: 800px;
-    margin-bottom: -50px;
+    margin-bottom: -345px;
 }
 
 .cursorPHS {
@@ -97,6 +97,9 @@ li {
     list-style-type: none;
 }
 
+.inactiveMenuItem {
+    color: grey;
+}
 
 .toolTip {
     background-color: #6f148a;
